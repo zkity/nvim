@@ -21,20 +21,20 @@ brew install ccat ranger ripgrep
 ```
 sudo apt install neovim
 pip3 install pynvim
-sudo apt install ccat ranger riggrep
+sudo apt install ranger
 ```
 
 - REHL 8
 ```
 yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 yum install -y neovim python3-neovim
-yum install ccat ranger riggrep
+yum install ranger
 ```
 
 ### 下载配置文件
 ```
 cd ~/.config/
-git clone git@github.com:zkity/nvim.git
+git clone https://github.com/zkity/nvim.git
 ```
 
 ### 开始食用

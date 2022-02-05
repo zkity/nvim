@@ -19,7 +19,7 @@ endif
 source $HOME/.config/nvim/_machine_specific.vim
 
 " --- vim配置
-" let g:neoterm_autoscroll = 1
+let g:neoterm_autoscroll = 1
 " set clipboard=unnamedplus
 let &t_ut=''
 set autochdir
@@ -94,6 +94,11 @@ noremap <LEADER>j <C-w>j
 noremap <LEADER>k <C-w>k
 noremap <LEADER>w <C-w>w
 
+noremap <LEADER>H <C-w>H
+noremap <LEADER>L <C-w>L
+noremap <LEADER>J <C-w>J
+noremap <LEADER>K <C-w>K
+
 " 窗口切分
 noremap sk :set nosplitbelow<CR>:split<CR>:set splitbelow<CR>
 noremap sj :set splitbelow<CR>:split<CR>
@@ -106,9 +111,9 @@ noremap <down> :res -5<CR>
 noremap <left> :vertical resize-5<CR>
 noremap <right> :vertical resize+5<CR>
 
-" 水平和垂直切换窗口
-noremap sh <C-w>t<C-w>K
-noremap sv <C-w>t<C-w>H
+" 水平切换到垂直窗口
+noremap sth <C-w>t<C-w>K
+noremap stv <C-w>t<C-w>H
 
 " 旋转窗口
 noremap srh <C-w>b<C-w>K
@@ -315,7 +320,7 @@ let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 " colorscheme dracula
 colorscheme deus
 " set cursorcolumn
-hi NonText ctermfg=gray guifg=grey1
+hi NonText ctermfg=black guifg=grey1
 
 " +++ tabular 
 vmap ga :Tabularize /
@@ -401,8 +406,8 @@ nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
-" Use <LEADER>h to show documentation in preview window.
-nnoremap <LEADER>h :call <SID>show_documentation()<CR>
+" Use <LEADER>d to show documentation in preview window.
+nnoremap <LEADER>d :call <SID>show_documentation()<CR>
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
@@ -485,6 +490,7 @@ command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.org
 " provide custom statusline: lightline.vim, vim-airline.
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
+
 " Mappings for CoCList
 " Show all diagnostics.
 nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
@@ -497,11 +503,11 @@ nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
 " Search workspace symbols.
 nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
 " Do default action for next item.
-nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+nnoremap <silent><nowait> <space>n  :<C-u>CocNext<CR>
 " Do default action for previous item.
-nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+nnoremap <silent><nowait> <space>p  :<C-u>CocPrev<CR>
 " Resume latest coc list.
-nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+nnoremap <silent><nowait> <space>r  :<C-u>CocListResume<CR>
 
 " +++ fzf
 " nnoremap <c-p> :Leaderf file<CR>
@@ -561,7 +567,7 @@ highlight link RnvimrNormal CursorLine
 nnoremap <silent> R :RnvimrToggle<CR><C-\><C-n>:RnvimrResize 0<CR>
 let g:rnvimr_action = {
             \ '<C-t>': 'NvimEdit tabedit',
-            \ '<C-x>': 'NvimEdit split',
+            \ '<C-s>': 'NvimEdit split',
             \ '<C-v>': 'NvimEdit vsplit',
             \ 'gw': 'JumpNvimCwd',
             \ 'yw': 'EmitRangerCwd'
@@ -629,6 +635,9 @@ let g:vista#renderer#icons = {
 " +++ rainbow
 let g:rainbow_active = 1
 
+" +++ indentLine
+let g:indentLine_setColors = 0
+
 " terminal color
 let g:terminal_color_0  = '#000000'
 let g:terminal_color_1  = '#FF5555'
@@ -645,3 +654,4 @@ let g:terminal_color_11 = '#F4F99D'
 let g:terminal_color_12 = '#CAA9FA'
 let g:terminal_color_13 = '#FF92D0'
 let g:terminal_color_14 = '#9AEDFE'
+

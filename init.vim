@@ -188,15 +188,14 @@ Plug 'RRethy/vim-hexokinase', { 'do': 'make hexokinase' }
 " 文件浏览
 "Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 "Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'kevinhwang91/rnvimr'
 
 " 查找文件
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
+" Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 
-" 在浮动窗口预览文件
-Plug 'kevinhwang91/rnvimr'
+" 调用ranger
+" Plug 'kevinhwang91/rnvimr'
 
 " 在打开文件时切换到项目根目录
 Plug 'airblade/vim-rooter'
@@ -278,10 +277,10 @@ Plug 'peitalin/vim-jsx-typescript'
 Plug 'fatih/vim-go' , { 'for': ['go', 'vim-plug'], 'tag': '*' }
 
 " Python
-" Plug 'tmhedberg/SimpylFold', { 'for' :['python', 'vim-plug'] }
+Plug 'tmhedberg/SimpylFold', { 'for' :['python', 'vim-plug'] }
 Plug 'Vimjas/vim-python-pep8-indent', { 'for' :['python3', 'vim-plug'] }
 " Plug 'numirias/semshi', { 'do': ':UpdateRemotePlugins', 'for' :['python3', 'vim-plug'] }
-Plug 'tweekmonster/braceless.vim', { 'for' :['python3', 'vim-plug'] }
+" Plug 'tweekmonster/braceless.vim', { 'for' :['python3', 'vim-plug'] }
 
 " Flutter
 Plug 'dart-lang/dart-vim-plugin'
@@ -325,9 +324,6 @@ hi NonText ctermfg=black guifg=grey1
 " +++ tabular 
 vmap ga :Tabularize /
 
-" +++ eleline
-let g:airline_powerline_fonts = 0
-
 " +++ gitgutter
 let g:gitgutter_sign_allow_clobber = 0
 let g:gitgutter_map_keys = 0
@@ -349,8 +345,8 @@ let g:coc_global_extensions = [
 	\ 'coc-clangd',
 	\ 'coc-java',
 	\ 'coc-go',
-	\ 'coc-python',
-	\ 'coc-pyright',
+    \ 'coc-jedi',
+    \ 'coc-pyright',
 	\ 'coc-rls',
 	\ 'coc-html',
 	\ 'coc-css',
@@ -423,7 +419,7 @@ endfunction
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Symbol renaming.
-nmap <leader>rn <Plug>(coc-rename)
+nmap <leader>k <Plug>(coc-rename)
 
 " Formatting selected code.
 xmap <leader>f  <Plug>(coc-format-selected)
@@ -437,29 +433,6 @@ augroup mygroup
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
 
-" Applying codeAction to the selected region.
-" Example: `<leader>aap` for current paragraph
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
-
-" Remap keys for applying codeAction to the current buffer.
-nmap <leader>ac  <Plug>(coc-codeaction)
-" Apply AutoFix to problem on the current line.
-nmap <leader>qf  <Plug>(coc-fix-current)
-
-" Run the Code Lens action on the current line.
-nmap <leader>cl  <Plug>(coc-codelens-action)
-
-" Map function and class text objects
-" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
-xmap if <Plug>(coc-funcobj-i)
-omap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap af <Plug>(coc-funcobj-a)
-xmap ic <Plug>(coc-classobj-i)
-omap ic <Plug>(coc-classobj-i)
-xmap ac <Plug>(coc-classobj-a)
-omap ac <Plug>(coc-classobj-a)
 
 " Remap <C-f> and <C-b> for scroll float windows/popups.
 if has('nvim-0.4.0') || has('patch-8.2.0750')
@@ -471,19 +444,6 @@ if has('nvim-0.4.0') || has('patch-8.2.0750')
   vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 endif
 
-" Use CTRL-S for selections ranges.
-" Requires 'textDocument/selectionRange' support of language server.
-nmap <silent> <C-s> <Plug>(coc-range-select)
-xmap <silent> <C-s> <Plug>(coc-range-select)
-
-" Add `:Format` command to format current buffer.
-command! -nargs=0 Format :call CocActionAsync('format')
-
-" Add `:Fold` command to fold current buffer.
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
-
-" Add `:OR` command for organize imports of the current buffer.
-command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
 
 " Add (Neo)Vim's native statusline support.
 " NOTE: Please see `:h coc-status` for integrations with external plugins that
@@ -493,92 +453,80 @@ set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " Mappings for CoCList
 " Show all diagnostics.
-nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
+nnoremap <silent><nowait> -a  :<C-u>CocList diagnostics<cr>
 " Manage extensions.
-nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
+nnoremap <silent><nowait> -e  :<C-u>CocList extensions<cr>
 " Show commands.
-nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
+nnoremap <silent><nowait> -c  :<C-u>CocList commands<cr>
 " Find symbol of current document.
-nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
+nnoremap <silent><nowait> -o  :<C-u>CocList outline<cr>
 " Search workspace symbols.
-nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
+nnoremap <silent><nowait> -s  :<C-u>CocList -I symbols<cr>
 " Do default action for next item.
-nnoremap <silent><nowait> <space>n  :<C-u>CocNext<CR>
+nnoremap <silent><nowait> -n  :<C-u>CocNext<CR>
 " Do default action for previous item.
-nnoremap <silent><nowait> <space>p  :<C-u>CocPrev<CR>
+nnoremap <silent><nowait> -p  :<C-u>CocPrev<CR>
 " Resume latest coc list.
-nnoremap <silent><nowait> <space>r  :<C-u>CocListResume<CR>
+nnoremap <silent><nowait> -r  :<C-u>CocListResume<CR>
 
 " +++ fzf
 " nnoremap <c-p> :Leaderf file<CR>
-noremap <silent> <C-p> :Files<CR>
+noremap <silent> <C-d> :Files<CR>
+noremap <silent> <C-l> :BLines<CR>
+noremap <silent> <C-b> :Buffers<CR>
 noremap <silent> <C-f> :Rg<CR>
 noremap <silent> <C-h> :History<CR>
-"noremap <C-t> :BTags<CR>
-" noremap <silent> <C-l> :Lines<CR>
-noremap <silent> <C-w> :Buffers<CR>
-noremap <leader>; :History:<CR>
+noremap <silent> <C-t> :BTags<CR>
+noremap <silent> <C-c> :Color<CR>
+" noremap <leader>; :History:<CR>
 
 let g:fzf_preview_window = 'right:60%'
 let g:fzf_commits_log_options = '--graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr"'
 
-function! s:list_buffers()
-  redir => list
-  silent ls
-  redir END
-  return split(list, "\n")
-endfunction
-
-function! s:delete_buffers(lines)
-  execute 'bwipeout' join(map(a:lines, {_, line -> split(line)[0]}))
-endfunction
-
-command! BD call fzf#run(fzf#wrap({
-  \ 'source': s:list_buffers(),
-  \ 'sink*': { lines -> s:delete_buffers(lines) },
-  \ 'options': '--multi --reverse --bind ctrl-a:select-all+accept'
-\ }))
-
-noremap <c-d> :BD<CR>
-
 let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.8 } }
+" let g:fzf_layout = { 'down': '40%' }
+
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-v': 'vsplit' }
 
 
 " +++ leaderf
-let g:Lf_PreviewInPopup = 1
-let g:Lf_PreviewCode = 1
-let g:Lf_ShowHidden = 1
-let g:Lf_ShowDevIcons = 1
-let g:Lf_UseVersionControlTool = 0
-let g:Lf_IgnoreCurrentBufferName = 1
-let g:Lf_WildIgnore = {
-        \ 'dir': ['.git', 'vendor', 'node_modules'],
-        \ 'file': ['__vim_project_root', 'class']
-        \}
-let g:Lf_UseMemoryCache = 0
-let g:Lf_UseCache = 0
+" let g:Lf_PreviewInPopup = 1
+" let g:Lf_PreviewCode = 1
+" let g:Lf_ShowHidden = 1
+" let g:Lf_ShowDevIcons = 1
+" let g:Lf_UseVersionControlTool = 0
+" let g:Lf_IgnoreCurrentBufferName = 1
+" let g:Lf_WildIgnore = {
+"         \ 'dir': ['.git', 'vendor', 'node_modules'],
+"         \ 'file': ['__vim_project_root', 'class']
+"         \}
+" let g:Lf_UseMemoryCache = 0
+" let g:Lf_UseCache = 0
 
 " +++ rnvimr
-let g:rnvimr_ex_enable = 1
-let g:rnvimr_pick_enable = 1
-let g:rnvimr_draw_border = 0
-" let g:rnvimr_bw_enable = 1
-highlight link RnvimrNormal CursorLine
-nnoremap <silent> R :RnvimrToggle<CR><C-\><C-n>:RnvimrResize 0<CR>
-let g:rnvimr_action = {
-            \ '<C-t>': 'NvimEdit tabedit',
-            \ '<C-s>': 'NvimEdit split',
-            \ '<C-v>': 'NvimEdit vsplit',
-            \ 'gw': 'JumpNvimCwd',
-            \ 'yw': 'EmitRangerCwd'
-            \ }
-let g:rnvimr_layout = { 'relative': 'editor',
-            \ 'width': &columns,
-            \ 'height': &lines,
-            \ 'col': 0,
-            \ 'row': 0,
-            \ 'style': 'minimal' }
-let g:rnvimr_presets = [{'width': 1.0, 'height': 1.0}]
+" let g:rnvimr_ex_enable = 1
+" let g:rnvimr_pick_enable = 1
+" let g:rnvimr_draw_border = 0
+" " let g:rnvimr_bw_enable = 1
+" " highlight link RnvimrNormal CursorLine
+" nnoremap <silent> R :RnvimrToggle<CR><C-\><C-n>:RnvimrResize 0<CR>
+" let g:rnvimr_action = {
+"             \ '<C-t>': 'NvimEdit tabedit',
+"             \ '<C-s>': 'NvimEdit split',
+"             \ '<C-v>': 'NvimEdit vsplit',
+"             \ 'gw': 'JumpNvimCwd',
+"             \ 'yw': 'EmitRangerCwd'
+"             \ }
+" let g:rnvimr_layout = { 'relative': 'editor',
+"             \ 'width': &columns,
+"             \ 'height': &lines,
+"             \ 'col': 0,
+"             \ 'row': 0,
+"             \ 'style': 'minimal' }
+" let g:rnvimr_presets = [{'width': 1.0, 'height': 1.0}]
 
 " +++ suda
 cnoreabbrev sudowrite w suda://%
@@ -638,20 +586,33 @@ let g:rainbow_active = 1
 " +++ indentLine
 let g:indentLine_setColors = 0
 
-" terminal color
-let g:terminal_color_0  = '#000000'
-let g:terminal_color_1  = '#FF5555'
-let g:terminal_color_2  = '#50FA7B'
-let g:terminal_color_3  = '#F1FA8C'
-let g:terminal_color_4  = '#BD93F9'
-let g:terminal_color_5  = '#FF79C6'
-let g:terminal_color_6  = '#8BE9FD'
-let g:terminal_color_7  = '#BFBFBF'
-let g:terminal_color_8  = '#4D4D4D'
-let g:terminal_color_9  = '#FF6E67'
-let g:terminal_color_10 = '#5AF78E'
-let g:terminal_color_11 = '#F4F99D'
-let g:terminal_color_12 = '#CAA9FA'
-let g:terminal_color_13 = '#FF92D0'
-let g:terminal_color_14 = '#9AEDFE'
+" +++ wildfire
+let g:wildfire_objects = ["i'", 'i"', "i)", "i]", "i}", "ip", "it"]
 
+" terminal color
+" " Terminal colors for seoul256 color scheme
+if has('nvim')
+  let g:terminal_color_0 = '#4e4e4e'
+  let g:terminal_color_1 = '#d68787'
+  let g:terminal_color_2 = '#5f865f'
+  let g:terminal_color_3 = '#d8af5f'
+  let g:terminal_color_4 = '#85add4'
+  let g:terminal_color_5 = '#d7afaf'
+  let g:terminal_color_6 = '#87afaf'
+  let g:terminal_color_7 = '#d0d0d0'
+  let g:terminal_color_8 = '#626262'
+  let g:terminal_color_9 = '#d75f87'
+  let g:terminal_color_10 = '#87af87'
+  let g:terminal_color_11 = '#ffd787'
+  let g:terminal_color_12 = '#add4fb'
+  let g:terminal_color_13 = '#ffafaf'
+  let g:terminal_color_14 = '#87d7d7'
+  let g:terminal_color_15 = '#e4e4e4'
+else
+  let g:terminal_ansi_colors = [
+    \ '#4e4e4e', '#d68787', '#5f865f', '#d8af5f',
+    \ '#85add4', '#d7afaf', '#87afaf', '#d0d0d0',
+    \ '#626262', '#d75f87', '#87af87', '#ffd787',
+    \ '#add4fb', '#ffafaf', '#87d7d7', '#e4e4e4'
+  \ ]
+endif
